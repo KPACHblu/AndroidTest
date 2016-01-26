@@ -16,12 +16,25 @@
 
 package com.example.android.displayingbitmaps.provider;
 
+import com.example.android.displayingbitmaps.provider.model.Photo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Some simple test data to use for this sample app.
  */
 public class Images {
+        private static List<Photo> photoList;
 
-    /**
+        public synchronized static List<Photo> getPhotoList() {
+                if (photoList == null) {
+                        photoList = new ArrayList<>();
+                }
+                return photoList;
+        }
+
+        /**
      * This are PicasaWeb URLs and could potentially change. Ideally the PicasaWeb API should be
      * used to fetch the URLs.
      *

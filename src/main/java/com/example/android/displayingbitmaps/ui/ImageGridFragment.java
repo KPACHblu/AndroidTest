@@ -303,7 +303,11 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
             // Finally load the image asynchronously into the ImageView, this also takes care of
             // setting a placeholder image while the background thread runs
-            mImageFetcher.loadImage(Images.imageThumbUrls[position - mNumColumns], imageView);
+            int index = position - mNumColumns;
+            if (Images.getPhotoList().size()>index) {
+                mImageFetcher.loadImage(Images.getPhotoList().get(index).getThumbUrl(), imageView);
+            }
+
             return imageView;
             //END_INCLUDE(load_gridview_item)
         }
