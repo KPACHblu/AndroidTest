@@ -30,6 +30,7 @@ import android.widget.ImageView;
 
 import com.example.android.common.logger.Log;
 import com.example.android.displayingbitmaps.BuildConfig;
+import com.example.android.displayingbitmaps.provider.Images;
 
 import java.lang.ref.WeakReference;
 
@@ -254,7 +255,8 @@ public abstract class ImageWorker {
                 Log.d(TAG, "doInBackground - starting work");
             }
 
-            final String dataString = String.valueOf(mData);
+            //final String dataString = String.valueOf(mData);
+            String dataString = String.valueOf(mData);
             Bitmap bitmap = null;
             BitmapDrawable drawable = null;
 
@@ -264,6 +266,22 @@ public abstract class ImageWorker {
                     try {
                         mPauseWorkLock.wait();
                     } catch (InterruptedException e) {}
+                }
+                while (Images.getPhotoList().isEmpty()) {
+                    try {
+                        mPauseWorkLock.wait();
+                    } catch (InterruptedException e) {}
+                }
+            }
+            System.out.println("Size of list:"+ Images.getPhotoList().size());
+            System.out.println("Data String:" + dataString);
+            if (mData instanceof Integer) {
+                int position = (Integer)mData;
+                if (Images.getPhotoList().size()>position) {
+                    dataString = Images.getPhotoList().get(position).getThumbUrl();
+                    mData = dataString;
+                    System.out.println("New data String:"+dataString);
+
                 }
             }
 
