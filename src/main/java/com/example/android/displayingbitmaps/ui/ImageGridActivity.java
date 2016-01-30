@@ -22,7 +22,6 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.example.android.displayingbitmaps.BuildConfig;
 import com.example.android.displayingbitmaps.util.Utils;
-import com.example.android.displayingbitmaps.util.vk.PhotoTask;
 
 /**
  * Simple FragmentActivity to hold the main {@link ImageGridFragment} and not much else.
@@ -36,7 +35,6 @@ public class ImageGridActivity extends FragmentActivity {
             Utils.enableStrictMode();
         }
         super.onCreate(savedInstanceState);
-        new PhotoTask().execute();
 
         if (getSupportFragmentManager().findFragmentByTag(TAG) == null) {
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

@@ -1,5 +1,7 @@
 package com.example.android.displayingbitmaps.util.vk;
 
+import android.widget.BaseAdapter;
+
 import com.example.android.common.logger.Log;
 import com.example.android.displayingbitmaps.provider.Images;
 import com.example.android.displayingbitmaps.provider.model.Photo;
@@ -14,18 +16,21 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by slitvinov on 1/26/16.
- */
-public class PhotoTask extends AsyncTask<String, Void, String>
+public class PhotoTask extends AsyncTask<String, Void, String>{
 
-    {
+    public PhotoTask(BaseAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    private BaseAdapter adapter;
         @Override
         protected String doInBackground(String... urls) {
 
             // params comes from the execute() call: params[0] is the url.
             try {
-                return downloadUrl("https://api.vk.com/method/photos.search?lat=50.0218205&long=36.2245285&v=5.44");
+                String requestUrl = "https://api.vk.com/method/photos.search?lat=50.0218205&long=36.2245285&offset=OFFSET_PARAM&count=50&v=5.44";
+                requestUrl = requestUrl.replace("OFFSET_PARAM", String.valueOf(Images.getPhotoList().size()));
+                return downloadUrl(requestUrl);
             } catch (IOException e) {
                 e.printStackTrace();
                 return "Unable to retrieve web page. URL may be invalid.";
@@ -50,6 +55,7 @@ public class PhotoTask extends AsyncTask<String, Void, String>
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            adapter.notifyDataSetChanged();
             Log.d("Debug tag", json!=null?json.toString():"empty json((");
         }
 

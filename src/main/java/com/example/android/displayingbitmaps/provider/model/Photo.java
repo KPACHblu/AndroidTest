@@ -1,8 +1,5 @@
 package com.example.android.displayingbitmaps.provider.model;
 
-/**
- * Created by slitvinov on 1/26/16.
- */
 public class Photo {
 
     public Photo(String url, String thumbUrl) {

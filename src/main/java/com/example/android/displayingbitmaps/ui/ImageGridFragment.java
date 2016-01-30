@@ -46,6 +46,7 @@ import com.example.android.displayingbitmaps.provider.Images;
 import com.example.android.displayingbitmaps.util.ImageCache;
 import com.example.android.displayingbitmaps.util.ImageFetcher;
 import com.example.android.displayingbitmaps.util.Utils;
+import com.example.android.displayingbitmaps.util.vk.PhotoTask;
 
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView
@@ -222,6 +223,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
         public ImageAdapter(Context context) {
             super();
+            new PhotoTask(this).execute();
             mContext = context;
             mImageViewLayoutParams = new GridView.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -242,13 +244,15 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             }
 
             // Size + number of columns for top empty row
-            return Images.imageThumbUrls.length + mNumColumns;
+            int size = Images.getPhotoList().size() + mNumColumns;
+            size = size == 0? 50 : size;
+            return size;
         }
 
         @Override
         public Object getItem(int position) {
             return position < mNumColumns ?
-                    null : Images.imageThumbUrls[position - mNumColumns];
+                    null : Images.getPhotoList().get(position - mNumColumns);
         }
 
         @Override
@@ -303,14 +307,11 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
             // Finally load the image asynchronously into the ImageView, this also takes care of
             // setting a placeholder image while the background thread runs
-            int index = position - mNumColumns;
-//            if (Images.getPhotoList().size()>index) {
-//                System.out.println("Index:"+index + "; size of list:"+Images.getPhotoList().size());
-//                mImageFetcher.loadImage(Images.getPhotoList().get(index).getThumbUrl(), imageView);
-//            } else {
-//                System.out.println("Index> size:"+index + "; size of list:"+Images.getPhotoList().size());
-//            }
-            mImageFetcher.loadImage(index, imageView);
+            position = position - mNumColumns;
+            mImageFetcher.loadImage(position, imageView);
+            if (position + 10> Images.getPhotoList().size()) {
+                new PhotoTask(this).execute();
+            }
 
             return imageView;
             //END_INCLUDE(load_gridview_item)
