@@ -1,28 +1,14 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.android.displayingbitmaps.ui;
 
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,14 +25,19 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.android.common.logger.Log;
 import com.example.android.displayingbitmaps.BuildConfig;
+import com.example.android.displayingbitmaps.MapsActivity;
 import com.example.android.displayingbitmaps.R;
 import com.example.android.displayingbitmaps.provider.Images;
 import com.example.android.displayingbitmaps.util.ImageCache;
 import com.example.android.displayingbitmaps.util.ImageFetcher;
 import com.example.android.displayingbitmaps.util.Utils;
 import com.example.android.displayingbitmaps.util.vk.PhotoTask;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
+import static com.example.android.displayingbitmaps.R.string.no_location;
 
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView
@@ -55,7 +46,8 @@ import com.example.android.displayingbitmaps.util.vk.PhotoTask;
  * cache is retained over configuration changes like orientation change so the images are populated
  * quickly if, for example, the user rotates the device.
  */
-public class ImageGridFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ImageGridFragment extends Fragment implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public static final String LOCATION_PARAM = "com.example.android.displayingbitmaps.ui.location";
     private static final String TAG = "ImageGridFragment";
     private static final String IMAGE_CACHE_DIR = "thumbs";
 
@@ -63,6 +55,12 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     private int mImageThumbSpacing;
     private ImageAdapter mAdapter;
     private ImageFetcher mImageFetcher;
+
+    /**
+     * Provides the entry point to Google Play services.
+     */
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
 
     /**
      * Empty constructor as per the Fragment documentation
@@ -73,6 +71,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        buildGoogleApiClient(this.getContext());
 
         mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
         mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
@@ -204,8 +203,29 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                 Toast.makeText(getActivity(), R.string.clear_cache_complete_toast,
                         Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.location_menu:
+                final Intent i = new Intent(getActivity(), MapsActivity.class);
+                i.putExtra(MapsActivity.CURRENT_LOCATION_PARAM, mLastLocation);
+                startActivityForResult(i, 105);
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case 105:
+                if (resultCode == getActivity().RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    if (bundle!=null) {
+                        mLastLocation = (Location) bundle.get(LOCATION_PARAM);
+                        Images.getPhotoList().clear();
+                        new PhotoTask(mAdapter, mLastLocation).execute();
+                    }
+                }
+                break;
+        }
     }
 
     /**
@@ -223,7 +243,6 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
         public ImageAdapter(Context context) {
             super();
-            new PhotoTask(this).execute();
             mContext = context;
             mImageViewLayoutParams = new GridView.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -308,13 +327,20 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             // Finally load the image asynchronously into the ImageView, this also takes care of
             // setting a placeholder image while the background thread runs
             position = position - mNumColumns;
-            mImageFetcher.loadImage(position, imageView);
-            if (position + 10> Images.getPhotoList().size()) {
-                new PhotoTask(this).execute();
-            }
+            mImageFetcher.loadImage(position, false, imageView);
+            runPhotoTask(position);
 
             return imageView;
             //END_INCLUDE(load_gridview_item)
+        }
+
+        private void runPhotoTask(int position) {
+            if (position + 10> Images.getPhotoList().size()) {
+                if (mLastLocation!=null) {
+                    Log.d(TAG, "App! getView.newPhoto task. Size of ImageList:"+Images.getPhotoList().size()+"; current position:"+position);
+                    new PhotoTask(this, mLastLocation).execute();
+                }
+            }
         }
 
         /**
@@ -342,4 +368,64 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             return mNumColumns;
         }
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        // Provides a simple way of getting a device's location and is well suited for
+        // applications that do not require a fine-grained location and that do not need location
+        // updates. Gets the best and most recent location currently available, which may be null
+        // in rare cases when a location is not available.
+        if (mLastLocation == null) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                Log.d(TAG, "Run PhotoTask");
+                new PhotoTask(this.mAdapter, mLastLocation).execute();
+
+            } else {
+                Toast.makeText(this.getContext(), no_location, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    /**
+     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+     */
+    private synchronized void buildGoogleApiClient(Context context) {
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
 }

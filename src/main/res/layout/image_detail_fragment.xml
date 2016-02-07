@@ -31,4 +31,13 @@
         android:layout_height="fill_parent"
         android:contentDescription="@string/imageview_description" />
 
+    <Button
+        android:id="@+id/openImageSourceButton"
+        android:layout_height="76dp"
+        android:layout_width="fill_parent"
+        android:text="@string/open_image_source"
+        android:onClick="openImageSource"
+        android:layout_gravity="center_horizontal|bottom" />
+
+
 </FrameLayout>

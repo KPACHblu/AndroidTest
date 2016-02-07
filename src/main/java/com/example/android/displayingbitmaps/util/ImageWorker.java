@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.android.displayingbitmaps.util;
 
 import android.content.Context;
@@ -26,11 +10,12 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.widget.ImageView;
 
-import com.example.android.common.logger.Log;
 import com.example.android.displayingbitmaps.BuildConfig;
 import com.example.android.displayingbitmaps.provider.Images;
+import com.example.android.displayingbitmaps.provider.model.Photo;
 
 import java.lang.ref.WeakReference;
 
@@ -73,7 +58,7 @@ public abstract class ImageWorker {
      * @param data The URL of the image to download.
      * @param imageView The ImageView to bind the downloaded image to.
      */
-    public void loadImage(Object data, ImageView imageView) {
+    public void loadImage(Object data, boolean bigPhoto, ImageView imageView) {
         if (data == null) {
             return;
         }
@@ -89,9 +74,8 @@ public abstract class ImageWorker {
             imageView.setImageDrawable(value);
         } else if (cancelPotentialWork(data, imageView)) {
             //BEGIN_INCLUDE(execute_background_task)
-            final BitmapWorkerTask task = new BitmapWorkerTask(data, imageView);
-            final AsyncDrawable asyncDrawable =
-                    new AsyncDrawable(mResources, mLoadingBitmap, task);
+            final BitmapWorkerTask task = new BitmapWorkerTask(data, bigPhoto, imageView);
+            final AsyncDrawable asyncDrawable = new AsyncDrawable(mResources, mLoadingBitmap, task);
             imageView.setImageDrawable(asyncDrawable);
 
             // NOTE: This uses a custom version of AsyncTask that has been pulled from the
@@ -238,10 +222,13 @@ public abstract class ImageWorker {
      */
     private class BitmapWorkerTask extends AsyncTask<Void, Void, BitmapDrawable> {
         private Object mData;
+        private boolean bigPhoto;
         private final WeakReference<ImageView> imageViewReference;
 
-        public BitmapWorkerTask(Object data, ImageView imageView) {
+        //TODO fix Object data -> Int or other specific type
+        public BitmapWorkerTask(Object data, boolean bigPhoto, ImageView imageView) {
             mData = data;
+            this.bigPhoto = bigPhoto;
             imageViewReference = new WeakReference<ImageView>(imageView);
         }
 
@@ -252,11 +239,9 @@ public abstract class ImageWorker {
         protected BitmapDrawable doInBackground(Void... params) {
             //BEGIN_INCLUDE(load_bitmap_in_background)
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "doInBackground - starting work");
+                Log.d(TAG, "doInBackground - starting work with "+mData);
             }
 
-            //final String dataString = String.valueOf(mData);
-            String dataString = String.valueOf(mData);
             Bitmap bitmap = null;
             BitmapDrawable drawable = null;
 
@@ -273,16 +258,13 @@ public abstract class ImageWorker {
                     } catch (InterruptedException e) {}
                 }
             }
-            System.out.println("Size of list:"+ Images.getPhotoList().size());
-            System.out.println("Data String:" + dataString);
-            if (mData instanceof Integer) {
-                int position = (Integer)mData;
-                if (Images.getPhotoList().size()>position) {
-                    dataString = Images.getPhotoList().get(position).getThumbUrl();
-                    mData = dataString;
-                    System.out.println("New data String:"+dataString);
-
-                }
+            Log.d(TAG, "Getting image url; mData:"+mData);
+            String dataString = "";
+            int position = (Integer)mData;
+            if (Images.getPhotoList().size()>position) {
+                Photo photo = Images.getPhotoList().get(position);
+                dataString = bigPhoto? photo.getUrl() : photo.getThumbUrl();
+                mData = dataString;
             }
 
             // If the image cache is available and this task has not been cancelled by another
@@ -291,6 +273,7 @@ public abstract class ImageWorker {
             // the cache
             if (mImageCache != null && !isCancelled() && getAttachedImageView() != null
                     && !mExitTasksEarly) {
+                Log.d(TAG, "doInBackground getBitmapFromCache");
                 bitmap = mImageCache.getBitmapFromDiskCache(dataString);
             }
 
@@ -300,6 +283,7 @@ public abstract class ImageWorker {
             // process method (as implemented by a subclass)
             if (bitmap == null && !isCancelled() && getAttachedImageView() != null
                     && !mExitTasksEarly) {
+                Log.d(TAG, "doInBackground processBitmapv");
                 bitmap = processBitmap(mData);
             }
 
@@ -310,20 +294,24 @@ public abstract class ImageWorker {
             if (bitmap != null) {
                 if (Utils.hasHoneycomb()) {
                     // Running on Honeycomb or newer, so wrap in a standard BitmapDrawable
+                    Log.d(TAG, "doInBackground BitmapDrawable");
                     drawable = new BitmapDrawable(mResources, bitmap);
                 } else {
                     // Running on Gingerbread or older, so wrap in a RecyclingBitmapDrawable
                     // which will recycle automagically
+                    Log.d(TAG, "doInBackground RecyclingBitmapDrawable");
                     drawable = new RecyclingBitmapDrawable(mResources, bitmap);
                 }
 
                 if (mImageCache != null) {
-                    mImageCache.addBitmapToCache(dataString, drawable);
+                    //TODO fix Cache blinking
+//                    Log.d(TAG, "doInBackground addBitmapToCache");
+//                    mImageCache.addBitmapToCache(dataString, drawable);
                 }
             }
 
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "doInBackground - finished work");
+                Log.d(TAG, "doInBackground - finished work with "+mData);
             }
 
             return drawable;

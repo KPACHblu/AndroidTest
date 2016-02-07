@@ -1,13 +1,17 @@
 package com.example.android.displayingbitmaps.provider.model;
 
-public class Photo {
+import java.io.Serializable;
 
-    public Photo(String url, String thumbUrl) {
+public class Photo implements Serializable{
+
+    public Photo(String url, String vkUrl, String thumbUrl) {
         this.url = url;
+        this.vkUrl = vkUrl;
         this.thumbUrl = thumbUrl;
     }
 
     private String url;
+    private String vkUrl;
     private String thumbUrl;
 
     public String getUrl() {
@@ -24,5 +28,13 @@ public class Photo {
 
     public void setThumbUrl(String thumbUrl) {
         this.thumbUrl = thumbUrl;
+    }
+
+    public String getVkUrl() {
+        return vkUrl;
+    }
+
+    public void setVkUrl(String vkUrl) {
+        this.vkUrl = vkUrl;
     }
 }
