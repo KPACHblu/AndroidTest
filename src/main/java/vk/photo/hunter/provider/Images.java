@@ -1,6 +1,6 @@
-package com.example.android.displayingbitmaps.provider;
+package vk.photo.hunter.provider;
 
-import com.example.android.displayingbitmaps.provider.model.Photo;
+import vk.photo.hunter.provider.model.Photo;
 
 import java.util.ArrayList;
 import java.util.List;

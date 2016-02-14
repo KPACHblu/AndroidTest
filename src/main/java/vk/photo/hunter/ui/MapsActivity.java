@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps;
+package vk.photo.hunter.ui;
 
 import android.content.Intent;
 import android.location.Location;
@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.android.displayingbitmaps.ui.ImageGridFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,16 +18,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    public static final String CURRENT_LOCATION_PARAM = "com.example.android.displayingbitmaps.CURRENT_LOCATION";
+    public static final String CURRENT_LOCATION_PARAM = "vk.photo.hunter.CURRENT_LOCATION";
     private GoogleMap mMap;
     private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(vk.photo.hunter.R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(vk.photo.hunter.R.id.map);
         mapFragment.getMapAsync(this);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         mLastLocation = (Location) getIntent().getExtras().get(CURRENT_LOCATION_PARAM);
@@ -36,7 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.maps_menu, menu);
+        getMenuInflater().inflate(vk.photo.hunter.R.menu.maps_menu, menu);
         return true;
     }
 
@@ -44,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.use_location:
+            case vk.photo.hunter.R.id.use_location:
                 final Intent i = new Intent();
                 i.putExtra(ImageGridFragment.LOCATION_PARAM, mLastLocation);
                 setResult(RESULT_OK, i);

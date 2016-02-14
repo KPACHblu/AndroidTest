@@ -1,11 +1,11 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
-import com.example.android.displayingbitmaps.BuildConfig;
+import vk.photo.hunter.BuildConfig;
 
 /**
  * A BitmapDrawable that keeps track of whether it is being displayed or cached.

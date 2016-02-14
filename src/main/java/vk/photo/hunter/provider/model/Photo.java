@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.provider.model;
+package vk.photo.hunter.provider.model;
 
 import java.io.Serializable;
 

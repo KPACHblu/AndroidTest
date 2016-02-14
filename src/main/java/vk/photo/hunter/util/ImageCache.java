@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-import com.example.android.displayingbitmaps.BuildConfig;
+import vk.photo.hunter.BuildConfig;
 
 import java.io.File;
 import java.io.FileDescriptor;

@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.ui;
+package vk.photo.hunter.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;

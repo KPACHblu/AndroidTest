@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.ui;
+package vk.photo.hunter.ui;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -18,11 +18,11 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
-import com.example.android.displayingbitmaps.R;
-import com.example.android.displayingbitmaps.provider.Images;
-import com.example.android.displayingbitmaps.util.ImageCache;
-import com.example.android.displayingbitmaps.util.ImageFetcher;
-import com.example.android.displayingbitmaps.util.Utils;
+import vk.photo.hunter.R;
+import vk.photo.hunter.provider.Images;
+import vk.photo.hunter.util.ImageCache;
+import vk.photo.hunter.util.ImageFetcher;
+import vk.photo.hunter.util.Utils;
 
 public class ImageDetailActivity extends FragmentActivity implements OnClickListener {
     private static final String IMAGE_CACHE_DIR = "images";

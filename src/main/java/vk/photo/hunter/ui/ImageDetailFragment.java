@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.ui;
+package vk.photo.hunter.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,12 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.example.android.displayingbitmaps.R;
-import com.example.android.displayingbitmaps.provider.Images;
-import com.example.android.displayingbitmaps.provider.model.Photo;
-import com.example.android.displayingbitmaps.util.ImageFetcher;
-import com.example.android.displayingbitmaps.util.ImageWorker;
-import com.example.android.displayingbitmaps.util.Utils;
+import vk.photo.hunter.R;
+import vk.photo.hunter.provider.Images;
+import vk.photo.hunter.util.ImageFetcher;
+import vk.photo.hunter.util.ImageWorker;
+import vk.photo.hunter.util.Utils;
 
 /**
  * This fragment will populate the children of the ViewPager from {@link ImageDetailActivity}.

@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.ui;
+package vk.photo.hunter.ui;
 
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
@@ -25,19 +25,19 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.android.displayingbitmaps.BuildConfig;
-import com.example.android.displayingbitmaps.MapsActivity;
-import com.example.android.displayingbitmaps.R;
-import com.example.android.displayingbitmaps.provider.Images;
-import com.example.android.displayingbitmaps.util.ImageCache;
-import com.example.android.displayingbitmaps.util.ImageFetcher;
-import com.example.android.displayingbitmaps.util.Utils;
-import com.example.android.displayingbitmaps.util.vk.PhotoTask;
+import vk.photo.hunter.BuildConfig;
+import vk.photo.hunter.ui.MapsActivity;
+import vk.photo.hunter.R;
+import vk.photo.hunter.provider.Images;
+import vk.photo.hunter.util.ImageCache;
+import vk.photo.hunter.util.ImageFetcher;
+import vk.photo.hunter.util.Utils;
+import vk.photo.hunter.util.vk.PhotoTask;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
-import static com.example.android.displayingbitmaps.R.string.no_location;
+import static vk.photo.hunter.R.string.no_location;
 
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView
@@ -47,7 +47,7 @@ import static com.example.android.displayingbitmaps.R.string.no_location;
  * quickly if, for example, the user rotates the device.
  */
 public class ImageGridFragment extends Fragment implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    public static final String LOCATION_PARAM = "com.example.android.displayingbitmaps.ui.location";
+    public static final String LOCATION_PARAM = "vk.photo.hunter.ui.location";
     private static final String TAG = "ImageGridFragment";
     private static final String IMAGE_CACHE_DIR = "thumbs";
 

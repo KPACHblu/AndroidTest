@@ -1,12 +1,12 @@
-package com.example.android.displayingbitmaps.util.vk;
+package vk.photo.hunter.util.vk;
 
 import android.location.Location;
 import android.util.Log;
 import android.widget.BaseAdapter;
 
-import com.example.android.displayingbitmaps.provider.Images;
-import com.example.android.displayingbitmaps.provider.model.Photo;
-import com.example.android.displayingbitmaps.util.AsyncTask;
+import vk.photo.hunter.provider.Images;
+import vk.photo.hunter.provider.model.Photo;
+import vk.photo.hunter.util.AsyncTask;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

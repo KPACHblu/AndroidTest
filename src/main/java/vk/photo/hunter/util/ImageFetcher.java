@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,8 +8,8 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.android.displayingbitmaps.BuildConfig;
-import com.example.android.displayingbitmaps.R;
+import vk.photo.hunter.BuildConfig;
+import vk.photo.hunter.R;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

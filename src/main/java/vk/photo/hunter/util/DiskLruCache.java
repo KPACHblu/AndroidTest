@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;

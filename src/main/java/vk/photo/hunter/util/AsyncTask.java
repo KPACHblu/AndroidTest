@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.annotation.TargetApi;
 import android.os.Handler;

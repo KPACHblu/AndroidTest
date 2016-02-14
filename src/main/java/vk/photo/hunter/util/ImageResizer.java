@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
 
-import com.example.android.displayingbitmaps.BuildConfig;
+import vk.photo.hunter.BuildConfig;
 
 import java.io.FileDescriptor;
 

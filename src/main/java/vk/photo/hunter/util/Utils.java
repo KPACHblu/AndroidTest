@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.os.Build;
 import android.os.Build.VERSION_CODES;

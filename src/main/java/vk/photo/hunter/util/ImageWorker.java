@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.util;
+package vk.photo.hunter.util;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -13,9 +13,9 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.example.android.displayingbitmaps.BuildConfig;
-import com.example.android.displayingbitmaps.provider.Images;
-import com.example.android.displayingbitmaps.provider.model.Photo;
+import vk.photo.hunter.BuildConfig;
+import vk.photo.hunter.provider.Images;
+import vk.photo.hunter.provider.model.Photo;
 
 import java.lang.ref.WeakReference;
 

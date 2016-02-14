@@ -1,4 +1,4 @@
-package com.example.android.displayingbitmaps.ui;
+package vk.photo.hunter.ui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -6,7 +6,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.example.android.displayingbitmaps.util.RecyclingBitmapDrawable;
+import vk.photo.hunter.util.RecyclingBitmapDrawable;
 
 /**
  * Sub-class of ImageView which automatically notifies the drawable when it is
