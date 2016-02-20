@@ -46,9 +46,15 @@
             android:label="@string/title_activity_maps">
         </activity>
 
+        <activity android:name="com.applovin.adview.AppLovinInterstitialActivity" />
+        <activity android:name="com.applovin.adview.AppLovinConfirmationActivity" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <meta-data android:name="applovin.sdk.key"
+            android:value="nRLQ4XFanpXxvDi14Cdcy0I6arTd2s8pITDM0TyoHTiAgQCldqMZrfgPUE2X4BKMeXkf_fRH79RpaeXCSvnITR"  />
 
     </application>
 

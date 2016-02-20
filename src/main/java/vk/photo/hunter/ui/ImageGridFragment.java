@@ -25,17 +25,18 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import vk.photo.hunter.BuildConfig;
-import vk.photo.hunter.ui.MapsActivity;
 import vk.photo.hunter.R;
 import vk.photo.hunter.provider.Images;
 import vk.photo.hunter.util.ImageCache;
 import vk.photo.hunter.util.ImageFetcher;
 import vk.photo.hunter.util.Utils;
+import vk.photo.hunter.util.ads.AppLovinService;
 import vk.photo.hunter.util.vk.PhotoTask;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
 import static vk.photo.hunter.R.string.no_location;
 
@@ -53,6 +54,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
     private int mImageThumbSize;
     private int mImageThumbSpacing;
+    private AppLovinService appLovinService;
     private ImageAdapter mAdapter;
     private ImageFetcher mImageFetcher;
 
@@ -65,7 +67,8 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     /**
      * Empty constructor as per the Fragment documentation
      */
-    public ImageGridFragment() {}
+    public ImageGridFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,12 +90,15 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
         mImageFetcher.setLoadingImage(R.drawable.empty_photo);
         mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+        if (savedInstanceState != null) {
+            appLovinService = new AppLovinService(getActivity(), savedInstanceState.getInt(appLovinService.METHOD_CALLS_COUNTER_TAG), savedInstanceState.getInt(appLovinService.ADS_DISPLAYED_COUNTER_TAG));
+        } else {
+            appLovinService = new AppLovinService(getActivity());
+        }
     }
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.image_grid_fragment, container, false);
         final GridView mGridView = (GridView) v.findViewById(R.id.gridView);
         mGridView.setAdapter(mAdapter);
@@ -113,7 +119,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem,
-                    int visibleItemCount, int totalItemCount) {
+                                 int visibleItemCount, int totalItemCount) {
             }
         });
 
@@ -153,6 +159,15 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "onSaveInstanceState, MethodCallsCounter:" + appLovinService.getMethodCallsCounter() + ";AdsDisplayedCounter:" + appLovinService.getAdsDisplayedCounter());
+        savedInstanceState.putInt(appLovinService.METHOD_CALLS_COUNTER_TAG, appLovinService.getMethodCallsCounter());
+        savedInstanceState.putInt(appLovinService.ADS_DISPLAYED_COUNTER_TAG, appLovinService.getAdsDisplayedCounter());
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mImageFetcher.setExitTasksEarly(false);
@@ -176,14 +191,14 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     @TargetApi(VERSION_CODES.JELLY_BEAN)
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        appLovinService.tryToShowAds();
         final Intent i = new Intent(getActivity(), ImageDetailActivity.class);
         i.putExtra(ImageDetailActivity.EXTRA_IMAGE, (int) id);
         if (Utils.hasJellyBean()) {
             // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
             // show plus the thumbnail image in GridView is cropped. so using
             // makeScaleUpAnimation() instead.
-            ActivityOptions options =
-                    ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
+            ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
             getActivity().startActivity(i, options.toBundle());
         } else {
             startActivity(i);
@@ -214,11 +229,11 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
+        switch (requestCode) {
             case 105:
                 if (resultCode == getActivity().RESULT_OK) {
                     Bundle bundle = data.getExtras();
-                    if (bundle!=null) {
+                    if (bundle != null) {
                         mLastLocation = (Location) bundle.get(LOCATION_PARAM);
                         Images.getPhotoList().clear();
                         new PhotoTask(mAdapter, mLastLocation).execute();
@@ -226,6 +241,64 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        // Provides a simple way of getting a device's location and is well suited for
+        // applications that do not require a fine-grained location and that do not need location
+        // updates. Gets the best and most recent location currently available, which may be null
+        // in rare cases when a location is not available.
+        if (mLastLocation == null) {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                Log.d(TAG, "Run PhotoTask");
+                new PhotoTask(this.mAdapter, mLastLocation).execute();
+
+            } else {
+                Toast.makeText(this.getContext(), no_location, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    /**
+     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+     */
+    private synchronized void buildGoogleApiClient(Context context) {
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
     /**
@@ -264,7 +337,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
             // Size + number of columns for top empty row
             int size = Images.getPhotoList().size() + mNumColumns;
-            size = size == 0? 50 : size;
+            size = size == 0 ? 50 : size;
             return size;
         }
 
@@ -335,9 +408,9 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         }
 
         private void runPhotoTask(int position) {
-            if (position + 10> Images.getPhotoList().size()) {
-                if (mLastLocation!=null) {
-                    Log.d(TAG, "App! getView.newPhoto task. Size of ImageList:"+Images.getPhotoList().size()+"; current position:"+position);
+            if (position + 10 > Images.getPhotoList().size()) {
+                if (mLastLocation != null) {
+                    Log.d(TAG, "App! getView.newPhoto task. Size of ImageList:" + Images.getPhotoList().size() + "; current position:" + position);
                     new PhotoTask(this, mLastLocation).execute();
                 }
             }
@@ -360,72 +433,13 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             notifyDataSetChanged();
         }
 
-        public void setNumColumns(int numColumns) {
-            mNumColumns = numColumns;
-        }
-
         public int getNumColumns() {
             return mNumColumns;
         }
-    }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        // Provides a simple way of getting a device's location and is well suited for
-        // applications that do not require a fine-grained location and that do not need location
-        // updates. Gets the best and most recent location currently available, which may be null
-        // in rare cases when a location is not available.
-        if (mLastLocation == null) {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null) {
-                Log.d(TAG, "Run PhotoTask");
-                new PhotoTask(this.mAdapter, mLastLocation).execute();
-
-            } else {
-                Toast.makeText(this.getContext(), no_location, Toast.LENGTH_LONG).show();
-            }
+        public void setNumColumns(int numColumns) {
+            mNumColumns = numColumns;
         }
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
-        // onConnectionFailed.
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
-    }
-
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        // The connection to Google Play services was lost for some reason. We call connect() to
-        // attempt to re-establish the connection.
-        Log.i(TAG, "Connection suspended");
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    /**
-     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
-     */
-    private synchronized void buildGoogleApiClient(Context context) {
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
     }
 
 }
