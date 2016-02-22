@@ -130,6 +130,7 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
+        //TODO Fix: Show Map when it chosen
         return super.onOptionsItemSelected(item);
     }
 

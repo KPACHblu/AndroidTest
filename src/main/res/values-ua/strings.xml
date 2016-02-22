@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+<string name="clear_cache_complete_toast">Кеш було очищено</string>
+<string name="imageview_description">Мініатюра</string>
+<string name="no_network_connection_toast">Інтернет з\'єднання відсутнє</string>
+<string name="title_activity_maps">Карта</string>
+<string name="title_menu_location">Оберіть місцезнаходження</string>
+<string name="no_location">Місцезнаходження не визначено</string>
+<string name="open_image_source">Відкрити фото Вконтакті</string>
+
+</resources>
