@@ -1,4 +1,4 @@
-package vk.photo.hunter.util;
+package vk.photo.hunter.util.image;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,8 +14,10 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import vk.photo.hunter.BuildConfig;
-import vk.photo.hunter.provider.Images;
-import vk.photo.hunter.provider.model.Photo;
+import vk.photo.hunter.data.PhotoDao;
+import vk.photo.hunter.data.model.Photo;
+import vk.photo.hunter.util.Utils;
+import vk.photo.hunter.util.android.AsyncTask;
 
 import java.lang.ref.WeakReference;
 
@@ -148,7 +150,7 @@ public abstract class ImageWorker {
      * example, you could resize a large bitmap here, or pull down an image from the network.
      *
      * @param data The data to identify which image to process, as provided by
-     *            {@link ImageWorker#loadImage(Object, android.widget.ImageView)}
+     *            {@link ImageWorker#loadImage(Object, boolean, android.widget.ImageView)}
      * @return The processed bitmap
      */
     protected abstract Bitmap processBitmap(Object data);
@@ -252,7 +254,7 @@ public abstract class ImageWorker {
                         mPauseWorkLock.wait();
                     } catch (InterruptedException e) {}
                 }
-                while (Images.getPhotoList().isEmpty()) {
+                while (PhotoDao.getPhotoList().isEmpty()) {
                     try {
                         mPauseWorkLock.wait();
                     } catch (InterruptedException e) {}
@@ -261,8 +263,8 @@ public abstract class ImageWorker {
             Log.d(TAG, "Getting image url; mData:"+mData);
             String dataString = "";
             int position = (Integer)mData;
-            if (Images.getPhotoList().size()>position) {
-                Photo photo = Images.getPhotoList().get(position);
+            if (PhotoDao.getPhotoList().size()>position) {
+                Photo photo = PhotoDao.getPhotoList().get(position);
                 dataString = bigPhoto? photo.getUrl() : photo.getThumbUrl();
                 mData = dataString;
             }

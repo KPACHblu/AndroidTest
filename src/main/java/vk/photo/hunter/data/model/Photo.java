@@ -1,4 +1,4 @@
-package vk.photo.hunter.provider.model;
+package vk.photo.hunter.data.model;
 
 import java.io.Serializable;
 

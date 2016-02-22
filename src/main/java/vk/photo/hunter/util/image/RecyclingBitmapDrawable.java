@@ -1,4 +1,4 @@
-package vk.photo.hunter.util;
+package vk.photo.hunter.util.image;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

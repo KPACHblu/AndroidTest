@@ -78,7 +78,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 marker.setPosition(latLng);
                 mLastLocation.setLatitude(latLng.latitude);
                 mLastLocation.setLongitude(latLng.longitude);
-                Toast.makeText(getApplicationContext(), "Marker Location:"+latLng.latitude+";"+latLng.longitude, Toast.LENGTH_SHORT).show();
             }
         });
     }

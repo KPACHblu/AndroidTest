@@ -16,12 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
-import android.widget.Toast;
 
 import vk.photo.hunter.R;
-import vk.photo.hunter.provider.Images;
-import vk.photo.hunter.util.ImageCache;
-import vk.photo.hunter.util.ImageFetcher;
+import vk.photo.hunter.data.PhotoDao;
+import vk.photo.hunter.util.image.ImageCache;
+import vk.photo.hunter.util.image.ImageFetcher;
 import vk.photo.hunter.util.Utils;
 
 public class ImageDetailActivity extends FragmentActivity implements OnClickListener {
@@ -62,7 +61,7 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
         mImageFetcher.setImageFadeIn(false);
 
         // Set up ViewPager and backing adapter
-        mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), Images.getPhotoList().size());
+        mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), PhotoDao.getPhotoList().size());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
         mPager.setPageMargin((int) getResources().getDimension(R.dimen.horizontal_page_margin));
@@ -129,11 +128,6 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
         switch (item.getItemId()) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
-                return true;
-            case R.id.clear_cache:
-                mImageFetcher.clearCache();
-                Toast.makeText(
-                        this, R.string.clear_cache_complete_toast,Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -31,9 +31,9 @@ import com.google.android.gms.location.LocationServices;
 
 import vk.photo.hunter.BuildConfig;
 import vk.photo.hunter.R;
-import vk.photo.hunter.provider.Images;
-import vk.photo.hunter.util.ImageCache;
-import vk.photo.hunter.util.ImageFetcher;
+import vk.photo.hunter.data.PhotoDao;
+import vk.photo.hunter.util.image.ImageCache;
+import vk.photo.hunter.util.image.ImageFetcher;
 import vk.photo.hunter.util.Utils;
 import vk.photo.hunter.util.ads.AppLovinService;
 import vk.photo.hunter.util.vk.PhotoTask;
@@ -213,11 +213,6 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.clear_cache:
-                mImageFetcher.clearCache();
-                Toast.makeText(getActivity(), R.string.clear_cache_complete_toast,
-                        Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.location_menu:
                 final Intent i = new Intent(getActivity(), MapsActivity.class);
                 i.putExtra(MapsActivity.CURRENT_LOCATION_PARAM, mLastLocation);
@@ -235,7 +230,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
                     Bundle bundle = data.getExtras();
                     if (bundle != null) {
                         mLastLocation = (Location) bundle.get(LOCATION_PARAM);
-                        Images.getPhotoList().clear();
+                        PhotoDao.getPhotoList().clear();
                         new PhotoTask(mAdapter, mLastLocation).execute();
                     }
                 }
@@ -336,7 +331,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             }
 
             // Size + number of columns for top empty row
-            int size = Images.getPhotoList().size() + mNumColumns;
+            int size = PhotoDao.getPhotoList().size() + mNumColumns;
             size = size == 0 ? 50 : size;
             return size;
         }
@@ -344,7 +339,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         @Override
         public Object getItem(int position) {
             return position < mNumColumns ?
-                    null : Images.getPhotoList().get(position - mNumColumns);
+                    null : PhotoDao.getPhotoList().get(position - mNumColumns);
         }
 
         @Override
@@ -404,13 +399,12 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             runPhotoTask(position);
 
             return imageView;
-            //END_INCLUDE(load_gridview_item)
         }
 
         private void runPhotoTask(int position) {
-            if (position + 10 > Images.getPhotoList().size()) {
+            if (position + 10 > PhotoDao.getPhotoList().size()) {
                 if (mLastLocation != null) {
-                    Log.d(TAG, "App! getView.newPhoto task. Size of ImageList:" + Images.getPhotoList().size() + "; current position:" + position);
+                    Log.d(TAG, "App! getView.newPhoto task. Size of ImageList:" + PhotoDao.getPhotoList().size() + "; current position:" + position);
                     new PhotoTask(this, mLastLocation).execute();
                 }
             }
@@ -430,7 +424,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             mImageViewLayoutParams =
                     new GridView.LayoutParams(LayoutParams.MATCH_PARENT, mItemHeight);
             mImageFetcher.setImageSize(height);
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
 
         public int getNumColumns() {

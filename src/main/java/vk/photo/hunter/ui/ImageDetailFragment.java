@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import vk.photo.hunter.R;
-import vk.photo.hunter.provider.Images;
-import vk.photo.hunter.util.ImageFetcher;
-import vk.photo.hunter.util.ImageWorker;
+import vk.photo.hunter.data.PhotoDao;
+import vk.photo.hunter.util.image.ImageFetcher;
+import vk.photo.hunter.util.image.ImageWorker;
 import vk.photo.hunter.util.Utils;
 
 /**
@@ -29,7 +29,7 @@ public class ImageDetailFragment extends Fragment {
     /**
      * Factory method to generate a new instance of the fragment given an image number.
      *
-     * @param photo object with url to load
+     * @param position object with url to load
      * @return A new instance of ImageDetailFragment with imageNum extras
      */
     public static ImageDetailFragment newInstance(int position) {
@@ -68,7 +68,7 @@ public class ImageDetailFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(Images.getPhotoList().get(position).getVkUrl()));
+                i.setData(Uri.parse(PhotoDao.getPhotoList().get(position).getVkUrl()));
                 startActivity(i);
             }
         });

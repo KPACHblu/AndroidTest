@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package vk.photo.hunter.util;
+package vk.photo.hunter.util.android;
 
 import android.annotation.TargetApi;
 import android.os.Handler;
@@ -36,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import vk.photo.hunter.util.Utils;
 
 /**
  * *************************************

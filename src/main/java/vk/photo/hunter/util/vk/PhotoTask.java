@@ -12,9 +12,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import vk.photo.hunter.provider.Images;
-import vk.photo.hunter.provider.model.Photo;
-import vk.photo.hunter.util.AsyncTask;
+import vk.photo.hunter.data.PhotoDao;
+import vk.photo.hunter.data.model.Photo;
+import vk.photo.hunter.util.android.AsyncTask;
 
 public class PhotoTask extends AsyncTask<Void, Void, String> {
     private static final String TAG = "PhotoTask";
@@ -33,10 +33,10 @@ public class PhotoTask extends AsyncTask<Void, Void, String> {
         Log.d(TAG, "Try to run new PhotoTask");
         if (!isInProgress()) {
             setInProgress(true);
-            Log.d(TAG, "Start PhotoTask; Image size:" + Images.getPhotoList().size());
+            Log.d(TAG, "Start PhotoTask; Image size:" + PhotoDao.getPhotoList().size());
             try {
                 String requestUrl = "https://api.vk.com/method/photos.search?lat=LAT_PARAM&long=LONG_PARAM&offset=OFFSET_PARAM&count=250&v=5.44";
-                requestUrl = requestUrl.replace("OFFSET_PARAM", String.valueOf(Images.getPhotoList().size()));
+                requestUrl = requestUrl.replace("OFFSET_PARAM", String.valueOf(PhotoDao.getPhotoList().size()));
                 requestUrl = requestUrl.replace("LAT_PARAM", String.valueOf(location.getLatitude()));
                 requestUrl = requestUrl.replace("LONG_PARAM", String.valueOf(location.getLongitude()));
                 result = downloadUrl(requestUrl);
@@ -62,12 +62,12 @@ public class PhotoTask extends AsyncTask<Void, Void, String> {
                 String smallPhoto = jsonObject.optString("photo_130");
                 String bigPhoto = jsonObject.optString("photo_1280");
                 String vkUrl = "https://vk.com/photo" + jsonObject.optString("owner_id") + "_" + jsonObject.optString("id");
-                Images.getPhotoList().add(new Photo(bigPhoto, vkUrl, smallPhoto));
+                PhotoDao.getPhotoList().add(new Photo(bigPhoto, vkUrl, smallPhoto));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "Finished. Image size:" + Images.getPhotoList().size());
+        Log.d(TAG, "Finished. Image size:" + PhotoDao.getPhotoList().size());
         setInProgress(false);
         adapter.notifyDataSetChanged();
     }

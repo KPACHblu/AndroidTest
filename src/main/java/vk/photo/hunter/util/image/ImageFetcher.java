@@ -1,4 +1,4 @@
-package vk.photo.hunter.util;
+package vk.photo.hunter.util.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import vk.photo.hunter.BuildConfig;
 import vk.photo.hunter.R;
+import vk.photo.hunter.util.android.DiskLruCache;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

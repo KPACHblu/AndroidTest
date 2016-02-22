@@ -1,14 +1,11 @@
-package vk.photo.hunter.provider;
+package vk.photo.hunter.data;
 
-import vk.photo.hunter.provider.model.Photo;
+import vk.photo.hunter.data.model.Photo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class of the Photos
- */
-public class Images {
+public class PhotoDao {
     private static List<Photo> photoList;
 
     public synchronized static List<Photo> getPhotoList() {

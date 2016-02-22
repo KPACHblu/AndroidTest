@@ -1,4 +1,4 @@
-package vk.photo.hunter.util;
+package vk.photo.hunter.util.android;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
