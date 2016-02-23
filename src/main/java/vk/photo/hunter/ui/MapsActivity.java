@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,9 +16,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import vk.photo.hunter.R;
 
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     public static final String CURRENT_LOCATION_PARAM = "vk.photo.hunter.CURRENT_LOCATION";
+    private static final String TAG = "MapsActivity";
     private GoogleMap mMap;
     private Location mLastLocation;
 
@@ -31,6 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         mLastLocation = (Location) getIntent().getExtras().get(CURRENT_LOCATION_PARAM);
+        Log.d(TAG, "onCreate activity with location: " + mLastLocation);
     }
 
     @Override
@@ -53,8 +56,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -70,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        final Marker marker = mMap.addMarker(new MarkerOptions().position(sydney).title("Current location"));
+        final Marker marker = mMap.addMarker(new MarkerOptions().position(sydney).title(getApplicationContext().getResources().getString(R.string.current_location_marker)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override

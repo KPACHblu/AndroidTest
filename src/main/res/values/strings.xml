@@ -5,6 +5,8 @@
     <string name="clear_cache_complete_toast">Кэш был почищен</string>
     <string name="imageview_description">Миниатюра</string>
     <string name="no_network_connection_toast">Интернет соеденение отсутствует</string>
+    <string name="no_location_data_toast">Отсутствует информация о местоположении. Использую по-умолчанию.</string>
+    <string name="current_location_marker">Текущее местоположение</string>
     <string name="title_activity_maps">Карта</string>
     <string name="title_menu_location">Выберете местоположение</string>
     <string name="no_location">Местоположение не определено</string>

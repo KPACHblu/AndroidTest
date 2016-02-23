@@ -38,8 +38,6 @@ import vk.photo.hunter.util.Utils;
 import vk.photo.hunter.util.ads.AppLovinService;
 import vk.photo.hunter.util.vk.PhotoTask;
 
-import static vk.photo.hunter.R.string.no_location;
-
 /**
  * The main fragment that powers the ImageGridActivity screen. Fairly straight forward GridView
  * implementation with the key addition being the ImageWorker class w/ImageCache to load children
@@ -246,13 +244,10 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         // in rare cases when a location is not available.
         if (mLastLocation == null) {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null) {
-                Log.d(TAG, "Run PhotoTask");
-                new PhotoTask(this.mAdapter, mLastLocation).execute();
-
-            } else {
-                Toast.makeText(this.getContext(), no_location, Toast.LENGTH_LONG).show();
+            if (mLastLocation == null) {
+                mLastLocation = getDefaultLocation();
             }
+            new PhotoTask(this.mAdapter, mLastLocation).execute();
         }
     }
 
@@ -403,10 +398,11 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
 
         private void runPhotoTask(int position) {
             if (position + 10 > PhotoDao.getPhotoList().size()) {
-                if (mLastLocation != null) {
-                    Log.d(TAG, "App! getView.newPhoto task. Size of ImageList:" + PhotoDao.getPhotoList().size() + "; current position:" + position);
-                    new PhotoTask(this, mLastLocation).execute();
+                if (mLastLocation == null) {
+                    mLastLocation = getDefaultLocation();
                 }
+                Log.d(TAG, "getView.newPhoto task. Size of ImageList:" + PhotoDao.getPhotoList().size() + "; current position:" + position);
+                new PhotoTask(this, mLastLocation).execute();
             }
         }
 
@@ -434,6 +430,15 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         public void setNumColumns(int numColumns) {
             mNumColumns = numColumns;
         }
+    }
+
+    private Location getDefaultLocation() {
+        Location defaultLocation = new Location("");
+        defaultLocation.setLatitude(30);
+        defaultLocation.setLongitude(30);
+
+        Toast.makeText(getContext(), R.string.no_location_data_toast, Toast.LENGTH_LONG).show();
+        return defaultLocation;
     }
 
 }

@@ -35,12 +35,13 @@ public class PhotoTask extends AsyncTask<Void, Void, String> {
             setInProgress(true);
             Log.d(TAG, "Start PhotoTask; Image size:" + PhotoDao.getPhotoList().size());
             try {
-                String requestUrl = "https://api.vk.com/method/photos.search?lat=LAT_PARAM&long=LONG_PARAM&offset=OFFSET_PARAM&count=250&v=5.45&radius=6000";
+                String requestUrl = "http://api.vk.com/method/photos.search?lat=LAT_PARAM&long=LONG_PARAM&offset=OFFSET_PARAM&count=250&v=5.45&sort=0&radius=6000";
                 requestUrl = requestUrl.replace("OFFSET_PARAM", String.valueOf(PhotoDao.getPhotoList().size()));
                 requestUrl = requestUrl.replace("LAT_PARAM", String.valueOf(location.getLatitude()));
                 requestUrl = requestUrl.replace("LONG_PARAM", String.valueOf(location.getLongitude()));
                 result = downloadUrl(requestUrl);
             } catch (IOException e) {
+                //TODO we need something to show to user
                 e.printStackTrace();
             }
         } else {
