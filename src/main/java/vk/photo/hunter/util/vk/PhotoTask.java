@@ -2,7 +2,6 @@ package vk.photo.hunter.util.vk;
 
 import android.location.Location;
 import android.util.Log;
-import android.widget.BaseAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,38 +13,41 @@ import java.net.URL;
 
 import vk.photo.hunter.data.PhotoDao;
 import vk.photo.hunter.data.model.Photo;
+import vk.photo.hunter.ui.ImageGridFragment;
 import vk.photo.hunter.util.android.AsyncTask;
 
 public class PhotoTask extends AsyncTask<Void, Void, String> {
     private static final String TAG = "PhotoTask";
     private static boolean inProgress;
-    private Location location;
-    private BaseAdapter adapter;
+    private ImageGridFragment.ImageAdapter adapter;
+    private double latitude;
+    private double longitude;
 
-    public PhotoTask(BaseAdapter adapter, Location location) {
+    public PhotoTask(ImageGridFragment.ImageAdapter adapter, Location location) {
         this.adapter = adapter;
-        this.location = location;
+        this.latitude = location.getLatitude();
+        this.longitude = location.getLongitude();
     }
 
     @Override
     protected String doInBackground(Void... params) {
         String result = null;
-        Log.d(TAG, "Try to run new PhotoTask");
+        Log.d(TAG, "Try to run new PhotoTask with lat:" + latitude + ";long:" + longitude);
         if (!isInProgress()) {
             setInProgress(true);
-            Log.d(TAG, "Start PhotoTask; Image size:" + PhotoDao.getPhotoList().size());
+            Log.d(TAG, "Start PhotoList size:" + PhotoDao.getPhotoList().size() + " lat:" + latitude + "; long:" + longitude);
             try {
                 String requestUrl = "http://api.vk.com/method/photos.search?lat=LAT_PARAM&long=LONG_PARAM&offset=OFFSET_PARAM&count=250&v=5.45&sort=0&radius=6000";
                 requestUrl = requestUrl.replace("OFFSET_PARAM", String.valueOf(PhotoDao.getPhotoList().size()));
-                requestUrl = requestUrl.replace("LAT_PARAM", String.valueOf(location.getLatitude()));
-                requestUrl = requestUrl.replace("LONG_PARAM", String.valueOf(location.getLongitude()));
+                requestUrl = requestUrl.replace("LAT_PARAM", String.valueOf(latitude));
+                requestUrl = requestUrl.replace("LONG_PARAM", String.valueOf(longitude));
                 result = downloadUrl(requestUrl);
             } catch (IOException e) {
                 //TODO we need something to show to user
                 e.printStackTrace();
             }
         } else {
-            Log.d(TAG, "PhotoTask: wasn't run");
+            Log.d(TAG, "PhotoTask wasn't run");
         }
         return result;
     }
@@ -55,6 +57,7 @@ public class PhotoTask extends AsyncTask<Void, Void, String> {
         if (result == null) {
             return;
         }
+        int initialPhotoListSize = PhotoDao.getPhotoList().size();
         try {
             JSONObject json = new JSONObject(result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1));
             JSONArray jsonArray = json.getJSONObject("response").getJSONArray("items");
@@ -68,9 +71,14 @@ public class PhotoTask extends AsyncTask<Void, Void, String> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "Finished. Image size:" + PhotoDao.getPhotoList().size());
         setInProgress(false);
-        adapter.notifyDataSetChanged();
+        int currentPhotoListSize = PhotoDao.getPhotoList().size();
+        if (currentPhotoListSize == initialPhotoListSize) {
+            adapter.notifyNoDataPulled();
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+        Log.d(TAG, "Finished. PhotoList size:" + currentPhotoListSize);
     }
 
     private String downloadUrl(String urlString) throws IOException {

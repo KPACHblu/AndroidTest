@@ -49,6 +49,8 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     public static final String LOCATION_PARAM = "vk.photo.hunter.ui.location";
     private static final String TAG = "ImageGridFragment";
     private static final String IMAGE_CACHE_DIR = "thumbs";
+    private static final byte DEFAULT_LATITUDE = 30;
+    private static final byte DEFAULT_LONGITUDE = 30;
 
     private int mImageThumbSize;
     private int mImageThumbSpacing;
@@ -245,7 +247,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         if (mLastLocation == null) {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (mLastLocation == null) {
-                mLastLocation = getDefaultLocation();
+                useDefaultLocation();
             }
             new PhotoTask(this.mAdapter, mLastLocation).execute();
         }
@@ -296,7 +298,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
      * columns in the GridView is used to create a fake top row of empty views as we use a
      * transparent ActionBar and don't want the real top row of images to start off covered by it.
      */
-    private class ImageAdapter extends BaseAdapter {
+    public class ImageAdapter extends BaseAdapter {
 
         private final Context mContext;
         private int mItemHeight = 0;
@@ -396,16 +398,6 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
             return imageView;
         }
 
-        private void runPhotoTask(int position) {
-            if (position + 10 > PhotoDao.getPhotoList().size()) {
-                if (mLastLocation == null) {
-                    mLastLocation = getDefaultLocation();
-                }
-                Log.d(TAG, "getView.newPhoto task. Size of ImageList:" + PhotoDao.getPhotoList().size() + "; current position:" + position);
-                new PhotoTask(this, mLastLocation).execute();
-            }
-        }
-
         /**
          * Sets the item height. Useful for when we know the column width so the height can be set
          * to match.
@@ -430,15 +422,44 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         public void setNumColumns(int numColumns) {
             mNumColumns = numColumns;
         }
+
+        public void notifyNoDataPulled() {
+            Log.d(TAG, "notifyNoDataPulled");
+            //Sometimes VK returns empty response, try to use another location to get photos
+            if (PhotoDao.getPhotoList().isEmpty()) {
+                if (!isDefaultLocation(mLastLocation)) {
+                    useDefaultLocation();
+                    new PhotoTask(this, mLastLocation).execute();
+                } else {
+                    Toast.makeText(getContext(), R.string.no_photo_from_vk_toast, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+        private void runPhotoTask(int position) {
+            if (position + 10 > PhotoDao.getPhotoList().size()) {
+                if (mLastLocation == null) {
+                    useDefaultLocation();
+                }
+                Log.d(TAG, "getView.newPhoto task. Size of ImageList:" + PhotoDao.getPhotoList().size() + "; current position:" + position);
+                new PhotoTask(this, mLastLocation).execute();
+            }
+        }
+
     }
 
-    private Location getDefaultLocation() {
-        Location defaultLocation = new Location("");
-        defaultLocation.setLatitude(30);
-        defaultLocation.setLongitude(30);
+    private void useDefaultLocation() {
+        mLastLocation = new Location("");
+        mLastLocation.setLatitude(DEFAULT_LATITUDE);
+        mLastLocation.setLongitude(DEFAULT_LONGITUDE);
 
         Toast.makeText(getContext(), R.string.no_location_data_toast, Toast.LENGTH_LONG).show();
-        return defaultLocation;
     }
 
+    private boolean isDefaultLocation(Location location) {
+        if (location.getLatitude() == DEFAULT_LATITUDE && location.getLongitude() == DEFAULT_LONGITUDE) {
+            return true;
+        }
+        return false;
+    }
 }
