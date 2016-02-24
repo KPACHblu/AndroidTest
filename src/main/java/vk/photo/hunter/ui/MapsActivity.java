@@ -2,11 +2,12 @@ package vk.photo.hunter.ui;
 
 import android.content.Intent;
 import android.location.Location;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,7 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import vk.photo.hunter.R;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
     public static final String CURRENT_LOCATION_PARAM = "vk.photo.hunter.CURRENT_LOCATION";
     private static final String TAG = "MapsActivity";
     private GoogleMap mMap;
@@ -70,9 +71,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        final Marker marker = mMap.addMarker(new MarkerOptions().position(sydney).title(getApplicationContext().getResources().getString(R.string.current_location_marker)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14));
+        LatLng currentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        final Marker marker = mMap.addMarker(new MarkerOptions().position(currentLocation));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
+        mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+        mMap.setOnInfoWindowClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -82,6 +85,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mLastLocation.setLongitude(latLng.longitude);
             }
         });
+    }
+
+
+    private class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        public MarkerInfoWindowAdapter() {
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return getLayoutInflater().inflate(R.layout.maps_marker_fragment, null);
+        }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        //TODO Implement other logic
+        Log.d(TAG, "onInfoWindowClick");
+
     }
 
 }
