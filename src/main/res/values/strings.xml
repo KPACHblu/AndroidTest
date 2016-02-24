@@ -10,6 +10,7 @@
     <string name="current_location_marker">Текущее местоположение</string>
     <string name="title_activity_maps">Карта</string>
     <string name="title_menu_location">Выберете местоположение</string>
+    <string name="title_menu_use_location">Использовать</string>
     <string name="no_location">Местоположение не определено</string>
     <string name="open_image_source">Открыть фото Вконтакте</string>
 

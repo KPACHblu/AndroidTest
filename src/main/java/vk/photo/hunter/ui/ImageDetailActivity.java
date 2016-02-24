@@ -123,23 +123,6 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
         mImageFetcher.closeCache();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        //TODO Fix: Show Map when it chosen
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
     /**
      * Called by the ViewPager child fragments to load images via the one ImageFetcher
      */

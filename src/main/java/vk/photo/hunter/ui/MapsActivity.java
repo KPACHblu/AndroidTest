@@ -77,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng latLng) {
                 marker.setPosition(latLng);
+                marker.showInfoWindow();
                 mLastLocation.setLatitude(latLng.latitude);
                 mLastLocation.setLongitude(latLng.longitude);
             }
