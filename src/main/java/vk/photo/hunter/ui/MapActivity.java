@@ -12,6 +12,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -69,13 +71,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng currentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        final Circle circle = mMap.addCircle(new CircleOptions().center(currentLocation).radius(6000).strokeWidth(0f).fillColor(0x550000FF));
         final Marker marker = mMap.addMarker(new MarkerOptions().position(currentLocation).title(getApplicationContext().getResources().getString(R.string.maps_marker_location)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                circle.setCenter(latLng);
                 marker.setPosition(latLng);
                 marker.showInfoWindow();
                 mLastLocation.setLatitude(latLng.latitude);
