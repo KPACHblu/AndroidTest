@@ -35,7 +35,7 @@
                 android:value="vk.photo.hunter.ui.ImageGridActivity" />
         </activity>
         <activity
-            android:name=".ui.MapsActivity"
+            android:name=".ui.MapActivity"
             android:parentActivityName=".ui.ImageGridActivity"
             android:label="@string/title_activity_maps">
         </activity>

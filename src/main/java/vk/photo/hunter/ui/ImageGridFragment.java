@@ -214,8 +214,8 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.location_menu:
-                final Intent i = new Intent(getActivity(), MapsActivity.class);
-                i.putExtra(MapsActivity.CURRENT_LOCATION_PARAM, mLastLocation);
+                final Intent i = new Intent(getActivity(), MapActivity.class);
+                i.putExtra(MapActivity.CURRENT_LOCATION_PARAM, mLastLocation);
                 startActivityForResult(i, 105);
                 return true;
         }
