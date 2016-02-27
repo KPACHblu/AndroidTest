@@ -2,6 +2,7 @@ package vk.photo.hunter.ui;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,9 +19,9 @@ import android.view.WindowManager.LayoutParams;
 
 import vk.photo.hunter.R;
 import vk.photo.hunter.data.PhotoDao;
+import vk.photo.hunter.util.Utils;
 import vk.photo.hunter.util.image.ImageCache;
 import vk.photo.hunter.util.image.ImageFetcher;
-import vk.photo.hunter.util.Utils;
 
 public class ImageDetailActivity extends FragmentActivity implements OnClickListener {
     private static final String IMAGE_CACHE_DIR = "images";
@@ -121,6 +121,19 @@ public class ImageDetailActivity extends FragmentActivity implements OnClickList
     protected void onDestroy() {
         super.onDestroy();
         mImageFetcher.closeCache();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                Intent intent = NavUtils.getParentActivityIntent(this);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                NavUtils.navigateUpTo(this, intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

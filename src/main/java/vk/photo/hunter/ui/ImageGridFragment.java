@@ -32,10 +32,10 @@ import com.google.android.gms.location.LocationServices;
 import vk.photo.hunter.BuildConfig;
 import vk.photo.hunter.R;
 import vk.photo.hunter.data.PhotoDao;
-import vk.photo.hunter.util.image.ImageCache;
-import vk.photo.hunter.util.image.ImageFetcher;
 import vk.photo.hunter.util.Utils;
 import vk.photo.hunter.util.ads.AppLovinService;
+import vk.photo.hunter.util.image.ImageCache;
+import vk.photo.hunter.util.image.ImageFetcher;
 import vk.photo.hunter.util.vk.PhotoTask;
 
 /**
@@ -95,6 +95,7 @@ public class ImageGridFragment extends Fragment implements AdapterView.OnItemCli
         } else {
             appLovinService = new AppLovinService(getActivity());
         }
+        Log.d(TAG, "onCreate savedInstanceState:" + savedInstanceState);
     }
 
     @Override

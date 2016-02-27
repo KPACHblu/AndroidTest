@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,13 +47,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
+        switch (item.getItemId()) {
             case vk.photo.hunter.R.id.use_location:
                 final Intent i = new Intent();
                 i.putExtra(ImageGridFragment.LOCATION_PARAM, mLastLocation);
                 setResult(RESULT_OK, i);
                 finish();
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                final Intent intent = NavUtils.getParentActivityIntent(this);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                NavUtils.navigateUpTo(this, intent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -30,9 +30,6 @@
             android:label="@string/app_name"
             android:parentActivityName=".ui.ImageGridActivity"
             android:theme="@style/AppThemeDark.FullScreen">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="vk.photo.hunter.ui.ImageGridActivity" />
         </activity>
         <activity
             android:name=".ui.MapActivity"
