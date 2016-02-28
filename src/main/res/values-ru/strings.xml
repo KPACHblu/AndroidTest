@@ -5,9 +5,11 @@
     <string name="clear_cache_complete_toast">Кэш был почищен</string>
     <string name="imageview_description">Миниатюра</string>
     <string name="no_network_connection_toast">Интернет соеденение отсутствует</string>
+    <string name="no_location_data_toast">Отсутствует информация о местоположении. Использую по-умолчанию.</string>
+    <string name="no_photo_from_vk_toast">Невозможно получить фото с ВК. Попробуйте позже.</string>
     <string name="title_activity_maps">Карта</string>
     <string name="title_menu_location">Выберете местоположение</string>
-    <string name="no_location">Местоположение не определено</string>
+    <string name="maps_marker_location">Использовать это место?</string>
     <string name="open_image_source">Открыть фото Вконтакте</string>
 
 </resources>

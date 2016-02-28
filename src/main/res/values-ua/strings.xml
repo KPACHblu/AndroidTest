@@ -2,12 +2,14 @@
 
 <resources>
 
-<string name="clear_cache_complete_toast">Кеш було очищено</string>
-<string name="imageview_description">Мініатюра</string>
-<string name="no_network_connection_toast">Інтернет з\'єднання відсутнє</string>
-<string name="title_activity_maps">Карта</string>
-<string name="title_menu_location">Оберіть місцезнаходження</string>
-<string name="no_location">Місцезнаходження не визначено</string>
-<string name="open_image_source">Відкрити фото Вконтакті</string>
+    <string name="clear_cache_complete_toast">Кеш було очищено</string>
+    <string name="imageview_description">Мініатюра</string>
+    <string name="no_network_connection_toast">Інтернет з\'єднання відсутнє</string>
+    <string name="no_location_data_toast">Відсутня інформація про місцезнаходження. Використовую стандартне.</string>
+    <string name="no_photo_from_vk_toast">Неможливо отримати фото з ВК. Спробуйте пізніше.</string>
+    <string name="title_activity_maps">Карта</string>
+    <string name="title_menu_location">Оберіть місцезнаходження</string>
+    <string name="maps_marker_location">Використати це місце?</string>
+    <string name="open_image_source">Відкрити фото Вконтакті</string>
 
 </resources>
