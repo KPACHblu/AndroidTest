@@ -5,8 +5,8 @@
     <string name="clear_cache_complete_toast">Caches have been cleared</string>
     <string name="imageview_description">Image Thumbnail</string>
     <string name="no_network_connection_toast">No network connection found</string>
-    <string name="no_location_data_toast">Can't detect your location. Use default location.</string>
-    <string name="no_photo_from_vk_toast">Can't receive photo from VK. Try again later.</string>
+    <string name="no_location_data_toast">Can\'t detect your location. Use default location.</string>
+    <string name="no_photo_from_vk_toast">Can\'t receive photo from VK. Try again later.</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_menu_location">Choose location</string>
     <string name="maps_marker_location">Do you want to use this location?</string>

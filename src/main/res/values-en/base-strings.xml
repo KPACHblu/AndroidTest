@@ -3,6 +3,7 @@
 <resources>
     <string name="app_name">VK Photo Hunter</string>
     <string name="intro_message">
-
+        VK Photo Hunter allows you to find photos of your neighbors, people that are working or studying near you.
+        Take a look what people are doing near you: what cafes, cinemas, parks they visit. How they spend their free time.
     </string>
 </resources>
