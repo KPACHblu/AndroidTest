@@ -33,7 +33,7 @@ public class AppLovinService {
         if (adsDisplayedCounter < MAX_ADS_DISPLAYED_TIMES) {
             methodCallsCounter++;
             Log.d(TAG, "tryToShowAds, methodCallsCounter:" + methodCallsCounter + "; adsDisplayedCounter:" + adsDisplayedCounter);
-            if (methodCallsCounter == 5 || methodCallsCounter == 15 || methodCallsCounter == 25) {
+            if (methodCallsCounter == 5 || methodCallsCounter == 10 || methodCallsCounter == 25) {
                 showAd();
             } else if (methodCallsCounter > 35) {
                 showAd();
