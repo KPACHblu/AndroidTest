@@ -253,7 +253,7 @@ public class ImageFetcher extends ImageResizer {
         HttpURLConnection urlConnection = null;
         BufferedOutputStream out = null;
         BufferedInputStream in = null;
-
+        Log.d(TAG, "Try to download: " + urlString);
         try {
             final URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
